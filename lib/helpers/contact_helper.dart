@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_declarations
+
 import 'dart:html';
 import 'package:path/path.dart';
 import "dart:async";
@@ -17,9 +19,9 @@ class ContactHelper {
 
   ContactHelper.internal();
 
-  late Database _db;
+  Database? _db;
 
-  Future<Database> get db async {
+  Future<Database?> get db async {
     if (db != null) {
       return _db;
     } else {
@@ -38,16 +40,35 @@ class ContactHelper {
           "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY,$nameColumn TEXT, $emailColumn TEXT, $phoneColumn TEXT, $imgColumn TEXT)");
     });
   }
+
+  Future<Contact?> saveContact(Contact contact) async {
+    Database? dbContact = await db;
+    contact.id = await dbContact!.insert(contactTable, contact.toMap());
+    return contact;
+  }
+
+  Future<Contact?> getContact(int id) async {
+    Database? dbContact = await db;
+    List<Map<String, dynamic>> maps = await dbContact!.query(contactTable,
+        columns: [idColumn, nameColumn, emailColumn, phoneColumn, imgColumn],
+        where: "$idColumn = ?",
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return Contact.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
 }
 
 class Contact {
-  late int id;
-  late String name;
-  late String email;
-  late String phone;
-  late String img;
+  int? id;
+  String? name;
+  String? email;
+  String? phone;
+  String? img;
 
-  Contact.fromMap(Map map) {
+  Contact.fromMap(Map<String, dynamic> map) {
     id = map[idColumn];
     name = map[nameColumn];
     email = map[emailColumn];
@@ -55,7 +76,7 @@ class Contact {
     img = map[imgColumn];
   }
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       nameColumn: name,
       emailColumn: email,
