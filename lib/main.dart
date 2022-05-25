@@ -7,7 +7,9 @@ import 'package:agenda_contatos/ui/contact_page.dart';
 void main() {
   runApp(
     MaterialApp(
-      home: ContactPage(contact: Contact()),
+      home: HomePage(),
     ),
   );
 }
+// ContactPage(contact: Contact()),
+// HomePage(),

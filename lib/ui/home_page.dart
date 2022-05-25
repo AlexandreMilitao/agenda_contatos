@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:agenda_contatos/helpers/contact_helper.dart';
 import 'package:flutter/material.dart';
 
+import 'contact_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -19,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    Contact c = Contact();
+    //Contact c = Contact();
 
     //c.name = "Alexandre";
     //c.email = "ale.levi@hotmail.com";
@@ -29,10 +31,7 @@ class _HomePageState extends State<HomePage> {
     //helper.saveContact(c);
 
     helper.getAllContacts().then((list) async {
-      print(list);
       contacts = list as List<Contact>;
-      print(c);
-      print(contacts);
     });
   }
 
@@ -46,7 +45,9 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          _showContactPage(contact: Contact());
+        },
         child: Icon(Icons.add),
         backgroundColor: Colors.red,
       ),
@@ -64,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(10.0),
           child: Row(
             children: <Widget>[
               Container(
@@ -75,11 +76,12 @@ class _HomePageState extends State<HomePage> {
                   image: DecorationImage(
                       image: contacts[index].img != null
                           ? FileImage(File(contacts[index].img!))
-                          : const AssetImage("images/person.png") as FileImage),
+                          : AssetImage("assets/images/person.png")
+                              as ImageProvider),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10.0),
+                padding: EdgeInsets.only(left: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -109,6 +111,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      onTap: () {
+        _showContactPage(contact: contacts[index]);
+      },
     );
+  }
+
+  void _showContactPage({required Contact contact}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContactPage(contact: contact),
+      ),
+    ); //{required Contact contact}
   }
 }

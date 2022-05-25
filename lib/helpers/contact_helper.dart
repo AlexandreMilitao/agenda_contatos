@@ -84,7 +84,7 @@ class ContactHelper {
     );
   }
 
-  Future<List?> getAllContacts() async {
+  Future<List> getAllContacts() async {
     Database dbContact = await db;
     List<Map<String, dynamic>> listMap = await dbContact.rawQuery(
       "SELECT * FROM $contactTable",
