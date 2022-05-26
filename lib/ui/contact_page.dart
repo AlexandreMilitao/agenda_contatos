@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:agenda_contatos/helpers/contact_helper.dart';
 
@@ -18,6 +17,8 @@ class _ContactPageState extends State<ContactPage> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
 
+  final _nameFocus = FocusNode();
+
   bool _userEdited = false;
 
   late Contact _editedContact;
@@ -25,18 +26,12 @@ class _ContactPageState extends State<ContactPage> {
   @override
   Contact initState() {
     super.initState();
-    if (widget.contact == null) {
-      _editedContact = Contact();
-    } else {
-      _editedContact = Contact.fromMap(widget.contact.toMap());
-    }
-    if (_editedContact.name != null ||
-        _editedContact.email != null ||
-        _editedContact.phone != null) {
-      _nameController.text = _editedContact.name!;
-      _emailController.text = _editedContact.email!;
-      _phoneController.text = _editedContact.phone!;
-    }
+
+    _editedContact = Contact.fromMap(widget.contact.toMap());
+    _nameController.text = _editedContact.name ?? "";
+    _emailController.text = _editedContact.email ?? "";
+    _phoneController.text = _editedContact.phone ?? "";
+
     return _editedContact;
   }
 
@@ -49,7 +44,14 @@ class _ContactPageState extends State<ContactPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          if (_editedContact.name != null && _editedContact.name!.isNotEmpty) {
+            Navigator.pop(context,
+                _editedContact); //sai da tela e volta para anterior(esquema de pilha papel 1 papel 2)
+          } else {
+            FocusScope.of(context).requestFocus(_nameFocus);
+          }
+        },
         child: const Icon(Icons.save),
         backgroundColor: Colors.red,
       ),
@@ -74,6 +76,7 @@ class _ContactPageState extends State<ContactPage> {
             ),
             TextField(
               controller: _nameController,
+              focusNode: _nameFocus,
               decoration: InputDecoration(labelText: "Nome"),
               onChanged: (text) {
                 _userEdited = true;

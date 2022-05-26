@@ -129,7 +129,7 @@ class Contact {
   }
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> map = {
+    Map<String, dynamic>? map = {
       nameColumn: name,
       emailColumn: email,
       phoneColumn: phone,

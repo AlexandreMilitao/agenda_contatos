@@ -30,9 +30,7 @@ class _HomePageState extends State<HomePage> {
 
     //helper.saveContact(c);
 
-    helper.getAllContacts().then((list) async {
-      contacts = list as List<Contact>;
-    });
+    _getAllContacts();
   }
 
   @override
@@ -48,11 +46,11 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           _showContactPage(contact: Contact());
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         backgroundColor: Colors.red,
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         itemCount: contacts.length,
         itemBuilder: (context, index) {
           return _contactCard(context, index);
@@ -74,10 +72,11 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      image: contacts[index].img != null
-                          ? FileImage(File(contacts[index].img!))
-                          : AssetImage("assets/images/person.png")
-                              as ImageProvider),
+                    image: contacts[index].img != null
+                        ? FileImage(File(contacts[index].img!))
+                        : AssetImage("assets/images/person.png")
+                            as ImageProvider,
+                  ),
                 ),
               ),
               Padding(
@@ -117,12 +116,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showContactPage({required Contact contact}) {
-    Navigator.push(
+  void _showContactPage({required Contact contact}) async {
+    final recContact = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ContactPage(contact: contact),
-      ),
-    ); //{required Contact contact}
+      MaterialPageRoute(builder: (context) => ContactPage(contact: contact)),
+    ); //{required Contact contact}]
+    if (recContact != null) {
+      if (contact == null) {
+        await helper.updateContact(recContact);
+      } else {
+        await helper.saveContact(recContact);
+      }
+      _getAllContacts();
+    }
+  }
+
+  void _getAllContacts() {
+    helper.getAllContacts().then((list) async {
+      setState(() {
+        contacts = list as List<Contact>;
+      });
+    });
   }
 }
