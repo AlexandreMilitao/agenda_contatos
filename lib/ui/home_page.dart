@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(builder: (context) => ContactPage(contact: contact)),
     ); //{required Contact contact}]
     if (recContact != null) {
-      if (contact != null) {
+      if (contact!.id != null) {
         await helper.updateContact(recContact);
       } else {
         await helper.saveContact(recContact);
