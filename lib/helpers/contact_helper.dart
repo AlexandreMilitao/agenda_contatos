@@ -40,11 +40,11 @@ class ContactHelper {
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerversion) async {
       await db.execute(
-          "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY,$nameColumn TEXT, $emailColumn TEXT, $phoneColumn TEXT, $imgColumn TEXT)");
+          "CREATE TABLE $contactTable($idColumn INTEGER PRIMARY KEY UNIQUE,$nameColumn TEXT, $emailColumn TEXT, $phoneColumn TEXT, $imgColumn TEXT)");
     });
   }
 
-  Future<Contact> saveContact(Contact contact) async {
+  Future<Contact?> saveContact(Contact contact) async {
     Database dbContact = await db;
     contact.id = await dbContact.insert(contactTable, contact.toMap());
     return contact;
